@@ -1,4 +1,5 @@
 # stafi-validator-backups
 Backups and Restores of stafi validators blocks.json
 
-Unreleased but i have blocks.json if you need them DM me on telegram @GeordieR
+This project is the first iteration of a backups and restore solution for stafi, which will then be expanded to hopefully be for any substrate chain.  I'm no expert on substrate so this might start out a bit crazy! So be careful trying this on a live stafi chain!
+
