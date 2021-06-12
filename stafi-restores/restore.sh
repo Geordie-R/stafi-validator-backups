@@ -1,16 +1,25 @@
 #!/bin/bash
-
-#https://snapshots.geordier.co.uk/latestdownload.php
+#Include functions file for re-use
 . $HOME/geordiertools/useful_functions.sh
+
+#Get Main Parameters############
 get_config_value "platform-dir"
 platformdir=$(echo $global_value)
 
+get_config_value "platform-dir"
+platformdir=$(echo $global_value)
+
+log_file=$HOME/$platformdir/$platformdir.log
 downloadsdir="$HOME/geordiertools/downloads"
 
-get_config_value "platform-dir"
-platformdir=$(echo $global_value)
-log_file=$HOME/$platformdir/$platformdir.log
+#Read in environment variable from script switch
+use_last_download=$1
+#If calling this script as: ./restore.sh "use_last_download" then it will use the last downloaded snapshot.
 
+if  [[ $use_last_download == "use_last_download" ]];
+then
+pre_downloaded_filename=$(ls $downloadsdir  -Art | head -n 1)
+fi
 
 cat << "MENUEOF"
 ███╗   ███╗███████╗███╗   ██╗██╗   ██╗
@@ -22,13 +31,11 @@ cat << "MENUEOF"
 MENUEOF
 
 echo "Please choose the type of restore you require.  Read the options carefully."
-
 give_1="Give me the most up to date latest snapshot"
 give_2="Give me the second latest snapshot as I have issues with the first"
-give_3="Give me the third latest snapshot, this my last hope."
-#Choose what type of snapshot you require, which in turn goes to my website to retrieve the files that line up together.
+#Choose what type of snapshot you require
 PS3='Please enter the menu number below: '
-options=("$give_1" "$give_2" "$give_3" "Quit")
+options=("$give_1" "$give_2" "Quit")
 chosen_file=""
 select opt in "${options[@]}"
 do
@@ -39,13 +46,8 @@ do
         break
             ;;
         "$give_2")
-            echo "You chose to get the second latest snapshot"
+            echo "You chose to get the second latest snapshot if there is one"
         chosen_file="secondlatest"
-break
-            ;;
-        "$give_3")
-            echo "You chose to get the third latest snapshot"
-        chosen_file="thirdlatest"
 break
             ;;
         "Quit")
@@ -76,17 +78,42 @@ fi
 #rm -rf $downloadsdir/*.*
 cd $downloadsdir
 
-#Download blocks.json compressed into a .gz
-echo "Downloading compressed blocks json now from https://snapshots.geordier.co.uk/$latest_file"
-#  wget -Nc https://snapshots.geordier.co.uk/$latest_file -q --show-progress  -O - | sudo tar -xvz --strip=4
+if [[ $pre_downloaded == "true" ]];
+then
+
+  latest_file=$pre_downloaded_filename
+echo "Skipping download. Using last downloaded filename: $latest_file"
+elif [ -z "$pre_downloaded" ] || [[ $pre_downloaded == "false" ]] || [[ $pre_downloaded == "" ]];
+then
+  #Download blocks.json compressed into a .gz
+  echo "`date` - Downloading snapshot now from https://snapshots.geordier.co.uk/$latest_file"
+  wget -Nc https://snapshots.geordier.co.uk/$latest_file -q --show-progress
+  echo "`date` - Downloaded $downloadsdir/$latest_file"
+fi
 
 
+echo "Launching the start command at $HOME/geordiertools/stafi-startstop/start.sh to make sure directories are created for the restore"
+#Start the node to create te directories etc...
+$HOME/geordiertools/stafi-startstop/start.sh
+echo "Sleeping for 15 seconds...This ensures directory creation as the node starts syncing in the background."
+echo "During this short wait you should see your node appear on telemetry.polkadot.io on the stafi section"
+echo "please wait...."
+sleep 15
+#Stop the node
+$HOME/geordiertools/stafi-startstop/stop.sh
 
-echo "Downloaded compressed blocks json $latest_file"
+echo "`date` - Removing db files..."
+sudo rm -R $HOME/.local/share/stafi/chains/stafi_mainnet/db/*
+echo "`date` - Starting extraction..."
 
+echo "running sudo tar -zxf $downloadsdir/$latest_file --directory $HOME/.local/share/stafi/chains/stafi_mainnet/db"
+#sudo tar -xvf $downloadsdir/$latest_file --directory $HOME/.local/share/stafi/chains/stafi_mainnet/db
 
-jsonfile=$(ls *.json | head -1)
-echo "json file downloaded is $jsonfile"
+cd $HOME/.local/share/stafi/chains/stafi_mainnet/db/
+
+sudo pigz -dc $downloadsdir/$latest_file | pv | tar xf -
+
+echo "`date` - Finished extracting"
 
 cd $HOME/$platformdir/
 
@@ -102,10 +129,11 @@ RESTOREMENUEOF
 
 echo "Please choose the type of restore you require. The node will be stopped if it is currently launched in a background manner by using an & on the end.  Read the options carefully."
 
+viewloglink="$HOME/geordiertools/stafi-startstop/viewlog.sh"
 
-give_1="Import the blocks in the background. I can use the viewlog file to monitor progress."
-give_2="Import the blocks into the foreground but later then run the node in the background. Remember cancelling with Ctrl C at any point would stop the node"
-give_3="Extract the blocks json file into downloads folder and allow me to read it in myself however I want. Code will be provided."
+give_1="Start the node. I will run $viewloglink to monitor the background progress."
+give_2="Start the node in the foreground so I can see it. Remember it should be started in the background later."
+give_3="Do nothing, do not start the node I will take over from here."
 #Choose what type of snapshot you require, which in turn goes to my website to retrieve the files that line up together.
 PS3='Please enter the menu number below: '
 options=("$give_1" "$give_2" "$give_3" "Quit")
@@ -140,64 +168,28 @@ break
 done
 
 
-
-
-
-
-
-
-
-
-viewloglink="$HOME/geordiertools/stafi-startstop/viewlog.sh"
-
-
-
-
-
-
-
 if [[ $screentype == "background" ]];
 then
 $HOME/geordiertools/stafi-startstop/stop.sh
-
-
-echo "starting to import blocks, you may launch the $viewloglink file to view progress as we go"
-./target/release/stafi import-blocks --pruning archive $downloadsdir/$jsonfile >> $log_file 2>&1 &
-#sleep 3
-#$HOME/geordiertools/stafi-restore/restorelogwatcher.sh
+sleep 1
 echo "Launching the start command at $HOME/geordiertools/stafi-startstop/start.sh"
-#$HOME/geordiertools/stafi-startstop/start.sh
-elif [[ $screentype == "foreground" ]];
-then
-#$HOME/geordiertools/stafi-startstop/stop.sh
-./target/release/stafi import-blocks --pruning archive $downloadsdir/$jsonfile
-echo "*Launching the start command at $HOME/geordiertools/stafi-startstop/start.sh"
 $HOME/geordiertools/stafi-startstop/start.sh
 
-elif [[ $screentype == "backgroundscreen" ]];
+elif [[ $screentype == "foreground" ]];
 then
-#UNUSED - Left in for options in future
-sudo screen -dmS "stafi-node" ./target/release/stafi import-blocks --pruning archive $downloadsdir/$jsonfile
-elif [[ $screentype == "foregroundscreen" ]];
-then
-echo ""
-#UNUSED - Left in for options in future
-#sudo screen -mS "stafi-node" ./target/release/stafi import-blocks --pruning archive $downloadsdir/$jsonfile
-elif [[ $screentype == "noscreen" ]];
-then
-echo ""
-#UNUSED - Left in for options in future
-#sudo ./target/release/stafi import-blocks --pruning archive $downloadsdir/$jsonfile
+
+$HOME/geordiertools/stafi-startstop/stop.sh
+sleep 1
+$HOME/geordiertools/stafi-startstop/start.sh "foreground"
+
 elif [[ $screentype == "extractonly" ]];
 then
-echo "json file downloaded is $jsonfile"
-echo "You may want to run the following command whenever you wish to restore to the foreground"
-echo "./target/release/stafi import-blocks --pruning archive $downloadsdir/$jsonfile"
-echo "alternatively....to restore to the background"
-echo "./target/release/stafi import-blocks --pruning archive $downloadsdir/$jsonfile >> $log_file 2>&1 &"
-echo "then....to start the node you can run"
-echo "$HOME/geordiertools/stafi-startstop/start.sh"
-echo "...and if you have launched to the background go and view the log file here: $viewloglink"
 
+echo "You may want to run the following commands"
+echo "$HOME/geordiertools/stafi-startstop/start.sh"
+echo "You may also want to view the log after this by running $viewloglink"
 
 fi
+echo ""
+echo ""
+echo "## Script complete! ##"
