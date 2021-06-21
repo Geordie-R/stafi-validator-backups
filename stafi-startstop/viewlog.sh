@@ -16,4 +16,3 @@ fi
 log_file=$HOME/$platformdir/$platformdir.log
 
 tail -f $log_file
-
