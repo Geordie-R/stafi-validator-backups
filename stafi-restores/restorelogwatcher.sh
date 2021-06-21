@@ -13,6 +13,14 @@ function logToInteger(){
   echo $intReturn
 }
 
+function isInt(){
+  if [ "$1" -eq "$1" ] 2>/dev/null
+  then
+    echo "true"
+  else
+    echo "false"
+  fi
+}
 
 get_config_value "platform-dir"
 platformdir=$(echo $global_value)
@@ -45,40 +53,62 @@ function writePercentage() {
 
 
 
-synclog="$HOME/$platformdir/sync.log"
-touch $synclog
-#Set a stupid low figure to start
-echo -999999999999 > $synclog
+synclog="$HOME/geordiertools/stafi-restores/sync.log"
 
-
+echo "Please wait...you can review the sync progress also on https://telemetry.polkadot.io/#list/Stafi..."
 
 while [[ 1 -eq 1 ]]
   do
+    sleep 10
     their_head_hex=$(curl -H "Content-Type: application/json" -s -d '{"id":1, "jsonrpc":"2.0", "method": "chain_getHeader"}' $externalAPI | jq -r .result.number)
     their_head_block_num=$(printf "%u\n" "$their_head_hex")
 
     pre_our_head_block_num=$(tail -n 1 $HOME/stafi-node/stafi-node.log | awk '/Idle/ { print $10 }') #| sed 's/#//')
-    our_head_block_num=$(logToInteger $pre_our_head_block_num)
-#    echo "BLOCKDIFF PRE"
-    blockdiff=$(($their_head_block_num-$our_head_block_num))
-    echo $blockdiff > $synclog
+    our_head_block_num=$(logToInteger "$pre_our_head_block_num")
 
-    if [[ $their_head_block_num -le $our_head_block_num ]];
+    oursBool=$(isInt $our_head_block_num)
+    theirsBool=$(isInt $their_head_block_num)
+
+
+
+    if [[ $theirsBool == "true" ]] && [[ $oursBool == "true" ]];
     then
-      echo "breaking..."
-      break
-      echo "Chain is sync!"
+#     echo "its an int for both!"
+      blockdiff=$(($their_head_block_num-$our_head_block_num))
+      echo $blockdiff > $synclog
+
+   #   echo "Block difference is $blockdiff"
+
+      if [[ $their_head_block_num -le $our_head_block_num ]];
+      then
+       # echo "Chain info is theirs: $their_head_block_num AND ours: $our_head_block_num breaking..."
+        echo "Chain is sync!"
+        break
+      else
+        #echo "their: $their_head_block_num is not less or equal to ours: $our_head_block_num"
+        writePercentage $our_head_block_num $their_head_block_num
+        #Dont need to loop too fast.  Sleep for a few secs
+
+      fi
     else
-   #   echo "their: $their_head_block_num ours: $our_head_block_num"
-      writePercentage $our_head_block_num $their_head_block_num
-      #Dont need to loop too fast.  Sleep for a few secs
-      sleep 2
+#echo "hit else section"
+     pre_our_head_block_num=$(tail -n 1 $HOME/stafi-node/stafi-node.log | awk '/Sync/ { print $13 }') #| sed 's/#//')
+     our_head_block_num=$(logToInteger "$pre_our_head_block_num")
+     oursBool=$(isInt $our_head_block_num)
+     theirsBool=$(isInt $their_head_block_num)
+
+
+     if [[ $theirsBool == "true" ]] && [[ $oursBool == "true" ]];
+     then
+       blockdiff=$(($their_head_block_num-$our_head_block_num))
+       echo $blockdiff > $synclog
+       writePercentage $our_head_block_num $their_head_block_num
+
+     fi
+
 
     fi
-    sleep 1
   done
 
-echo "complete"
-
-#./stop.sh
-#"$HOME/geordiertools/stafi-startstop/stop.sh"
+echo "####################restorelogwatcher is complete. Shutting down restorelogwatcher####################"
+$HOME/geordiertools/stafi-startstop/stoplogwatcher.sh
