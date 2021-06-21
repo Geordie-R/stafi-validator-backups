@@ -11,6 +11,7 @@ dir_startstop="$dir_tools/stafi-startstop"
 dir_downloads="$dir_tools/downloads"
 config_file="$dir_tools/config.ini"
 
+mkdir -p $dir_downloads
 
 echo "Installing PV"
 apt-get install pv #Provides progress
