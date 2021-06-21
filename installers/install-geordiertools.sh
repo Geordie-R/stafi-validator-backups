@@ -10,14 +10,8 @@ dir_backups="$dir_tools/stafi-backups"
 dir_startstop="$dir_tools/stafi-startstop"
 dir_downloads="$dir_tools/downloads"
 config_file="$dir_tools/config.ini"
-echo "Creating $dir_restore"
-mkdir -p "$dir_restore"
-echo "Creating $dir_backups"
-mkdir -p "$dir_backups"
-echo "Creating $dir_startstop"
-mkdir -p "$dir_startstop"
-echo "Creating $dir_downloads"
-mkdir -p "$dir_downloads"
+
+
 echo "Installing PV"
 apt-get install pv #Provides progress
 echo "Installing Pigz"
