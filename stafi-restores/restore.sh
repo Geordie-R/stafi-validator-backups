@@ -14,12 +14,26 @@ downloadsdir="$HOME/geordiertools/downloads"
 
 #Read in environment variable from script switch
 use_last_download=$1
-#If calling this script as: ./restore.sh "use_last_download" then it will use the last downloaded snapshot.
+#If calling this script as: ./restore.sh "nodownload" then it will use the last downloaded snapshot from variable: downloadsdir
 
-if  [[ $use_last_download == "use_last_download" ]];
+if  [[ $use_last_download == "nodownload" ]] || [[ $use_last_download == "noextract" ]];
 then
 pre_downloaded_filename=$(ls $downloadsdir  -Art | head -n 1)
 fi
+
+
+## Functions
+
+function getBytesFromFilename(){
+  string="$1" #example: 2021-01-01-db-345678.gz" function returns 345678
+  searchString="-db-"
+  temp=${string#*$searchString} # this means everything after "and" will be inserted into temp
+  searchString=".tar.gz"
+  firstString=${temp=#*$searchString}
+  emptyString=""
+  bytesfromfilename="${firstString/$searchString/$emptyString}"
+  echo $bytesfromfilename
+}
 
 cat << "MENUEOF"
 ███╗   ███╗███████╗███╗   ██╗██╗   ██╗
@@ -32,7 +46,7 @@ MENUEOF
 
 echo "Please choose the type of restore you require.  Read the options carefully."
 give_1="Give me the most up to date latest snapshot"
-give_2="Give me the second latest snapshot as I have issues with the first"
+give_2="Give me the second latest snapshot as I have issues with the first (DO NOT USE)"
 #Choose what type of snapshot you require
 PS3='Please enter the menu number below: '
 options=("$give_1" "$give_2" "Quit")
@@ -46,7 +60,7 @@ do
         break
             ;;
         "$give_2")
-            echo "You chose to get the second latest snapshot if there is one"
+            echo "You chose to get the second latest snapshot if there is one. Currently unavailable."
         chosen_file="secondlatest"
 break
             ;;
@@ -74,6 +88,12 @@ then
 latest_file=${arr[2]};
 fi
 
+
+#Get the bytes from the filename portion after "-db-
+dir_size=$(getBytesFromFilename "$latest_file")
+
+echo "bytes from filename is $dir_size"
+
 #Clear blocks folder
 #rm -rf $downloadsdir/*.*
 cd $downloadsdir
@@ -95,36 +115,43 @@ fi
 echo "Launching the start command at $HOME/geordiertools/stafi-startstop/start.sh to make sure directories are created for the restore"
 #Start the node to create te directories etc...
 $HOME/geordiertools/stafi-startstop/start.sh
-echo "Sleeping for 15 seconds...This ensures directory creation as the node starts syncing in the background."
+echo "Sleeping for 10 seconds...This ensures directory creation as the node starts syncing in the background."
 echo "During this short wait you should see your node appear on telemetry.polkadot.io on the stafi section"
 echo "please wait...."
-sleep 15
+sleep 10
 #Stop the node
+echo "sleep ended"
 $HOME/geordiertools/stafi-startstop/stop.sh
-
 echo "`date` - Removing db files..."
-sudo rm -R $HOME/.local/share/stafi/chains/stafi_mainnet/db/*
+sudo rm -rf "$HOME/.local/share/stafi/chains/stafi_mainnet/db/*"
 echo "`date` - Starting extraction..."
 
-echo "running sudo tar -zxf $downloadsdir/$latest_file --directory $HOME/.local/share/stafi/chains/stafi_mainnet/db"
+#sudo mkdir $HOME/.local/share/stafi/chains/stafi_mainnet/db/
 #sudo tar -xvf $downloadsdir/$latest_file --directory $HOME/.local/share/stafi/chains/stafi_mainnet/db
 
 cd $HOME/.local/share/stafi/chains/stafi_mainnet/db/
 
-sudo pigz -dc $downloadsdir/$latest_file | pv | tar xf -
+if [[ $use_last_download == "noextract" ]];
+then
+echo "## NO EXTRACTION CHOSEN! ##"
+else
+
+
+sudo pigz -dc $downloadsdir/$latest_file | pv -s $dir_size | tar xf -
 
 echo "`date` - Finished extracting"
+fi
 
 cd $HOME/$platformdir/
 
 cat << "RESTOREMENUEOF"
 
-██████╗ ███████╗███████╗████████╗ ██████╗ ██████╗ ███████╗    ███╗   ███╗███████╗███╗   ██╗██╗   ██╗
-██╔══██╗██╔════╝██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗██╔════╝    ████╗ ████║██╔════╝████╗  ██║██║   ██║
-██████╔╝█████╗  ███████╗   ██║   ██║   ██║██████╔╝█████╗      ██╔████╔██║█████╗  ██╔██╗ ██║██║   ██║
-██╔══██╗██╔══╝  ╚════██║   ██║   ██║   ██║██╔══██╗██╔══╝      ██║╚██╔╝██║██╔══╝  ██║╚██╗██║██║   ██║
-██║  ██║███████╗███████║   ██║   ╚██████╔╝██║  ██║███████╗    ██║ ╚═╝ ██║███████╗██║ ╚████║╚██████╔╝
-╚═╝  ╚═╝╚══════╝╚══════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚══════╝    ╚═╝     ╚═╝╚══════╝╚═╝  ╚═══╝ ╚═════╝
+██████╗ ███████╗███████╗████████╗ ██████╗ ██████╗ ███████╗
+██╔══██╗██╔════╝██╔════╝╚══██╔══╝██╔═══██╗██╔══██╗██╔════╝
+██████╔╝█████╗  ███████╗   ██║   ██║   ██║██████╔╝█████╗
+██╔══██╗██╔══╝  ╚════██║   ██║   ██║   ██║██╔══██╗██╔══╝
+██║  ██║███████╗███████║   ██║   ╚██████╔╝██║  ██║███████╗
+╚═╝  ╚═╝╚══════╝╚══════╝   ╚═╝    ╚═════╝ ╚═╝  ╚═╝╚══════╝
 RESTOREMENUEOF
 
 echo "Please choose the type of restore you require. The node will be stopped if it is currently launched in a background manner by using an & on the end.  Read the options carefully."
@@ -171,8 +198,55 @@ done
 if [[ $screentype == "background" ]];
 then
 $HOME/geordiertools/stafi-startstop/stop.sh
-sleep 1
+sleep 2
 echo "Launching the start command at $HOME/geordiertools/stafi-startstop/start.sh"
+$HOME/geordiertools/stafi-startstop/start.sh
+
+echo "9999999" > $HOME/geordiertools/stafi-restores/sync.log
+
+echo "Delegating to restorelogwatcher.sh please wait..."
+sleep 1
+$HOME/geordiertools/stafi-restores/restorelogwatcher.sh &
+sleep 3
+
+
+#Bit lazy but its late and 1=1 works right :D
+while [[ "1" == "1" ]]
+do
+val=$(<$HOME/geordiertools/stafi-restores/sync.log)
+echo "restore.sh sync val is $val"
+if [[ $val -le 0 ]]; then
+echo "0 Block Difference Detected"
+        break;
+fi
+        sleep 2
+done
+echo "Complete from restore.sh!"
+
+
+
+cat << "EOF"
+ ██████╗██╗  ██╗ █████╗ ██╗███╗   ██╗
+██╔════╝██║  ██║██╔══██╗██║████╗  ██║
+██║     ███████║███████║██║██╔██╗ ██║
+██║     ██╔══██║██╔══██║██║██║╚██╗██║
+╚██████╗██║  ██║██║  ██║██║██║ ╚████║
+ ╚═════╝╚═╝  ╚═╝╚═╝  ╚═╝╚═╝╚═╝  ╚═══╝
+███████╗██╗   ██╗███╗   ██╗ ██████╗
+██╔════╝╚██╗ ██╔╝████╗  ██║██╔════╝
+███████╗ ╚████╔╝ ██╔██╗ ██║██║
+╚════██║  ╚██╔╝  ██║╚██╗██║██║
+███████║   ██║   ██║ ╚████║╚██████╗
+╚══════╝   ╚═╝   ╚═╝  ╚═══╝ ╚═════╝#
+ ██████╗ ██████╗ ███╗   ███╗██████╗ ██╗     ███████╗████████╗███████╗    ██╗
+██╔════╝██╔═══██╗████╗ ████║██╔══██╗██║     ██╔════╝╚══██╔══╝██╔════╝    ██║
+██║     ██║   ██║██╔████╔██║██████╔╝██║     █████╗     ██║   █████╗      ██║
+██║     ██║   ██║██║╚██╔╝██║██╔═══╝ ██║     ██╔══╝     ██║   ██╔══╝      ╚═╝
+╚██████╗╚██████╔╝██║ ╚═╝ ██║██║     ███████╗███████╗   ██║   ███████╗    ██╗
+ ╚═════╝ ╚═════╝ ╚═╝     ╚═╝╚═╝     ╚══════╝╚══════╝   ╚═╝   ╚══════╝    ╚═╝
+EOF
+
+echo "Launching the start command in the background at $HOME/geordiertools/stafi-startstop/start.sh"
 $HOME/geordiertools/stafi-startstop/start.sh
 
 elif [[ $screentype == "foreground" ]];
