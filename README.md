@@ -12,9 +12,11 @@ sudo ./install-user.sh
 
 Then later once the user is created do the following.  LEts say we called the user 'stafi' the command next would contain stafi.
 
+### Switch over to the new user
 ```
 su - stafi
+```
+Next install the geordiertools folder
+```
 sudo $HOME/geordiertools/installers/install-geordiertools.sh
-
-
 ```
