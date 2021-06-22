@@ -14,7 +14,7 @@ Then later once the user is created do the following.  LEts say we called the us
 
 ```
 su - stafi
-sudo ./$HOME/geordiertools/installers/install-geordiertools.sh
+sudo $HOME/geordiertools/installers/install-geordiertools.sh
 
 
 ```
