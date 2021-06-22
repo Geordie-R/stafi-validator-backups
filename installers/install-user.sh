@@ -24,4 +24,6 @@ apt-get -y upgrade
 apt-get -y install git
 
 git clone https://github.com/Geordie-R/stafi-validator-backups.git geordiertools
+chown -R $user: /home/$user/geordiertools/
 find * -type f -iname "*.sh" -exec chmod +x {} \;
+rm README.md
