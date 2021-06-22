@@ -1,4 +1,3 @@
-
 #!/bin/bash
 #. $HOME/geordiertools/useful_functions.sh
 #get_config_value "platform-dir"
