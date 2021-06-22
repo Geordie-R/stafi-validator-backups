@@ -1,4 +1,3 @@
-
 #!/bin/bash
 
 back_or_foreground=$1
