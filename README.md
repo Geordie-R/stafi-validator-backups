@@ -5,6 +5,7 @@ This project is the first iteration of a backups and restore solution for stafi,
 
 ```
 cd ~
-git clone https://github.com/Geordie-R/stafi-validator-backups.git geordiertools
-find * -type f -iname "*.sh" -exec chmod +x {} \;
+wget https://raw.githubusercontent.com/Geordie-R/stafi-validator-backups/main/installers/install-user.sh
+chmod +x install-user.sh
+./install-user.sh
 ```
