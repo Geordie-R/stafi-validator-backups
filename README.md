@@ -9,3 +9,12 @@ wget https://raw.githubusercontent.com/Geordie-R/stafi-validator-backups/main/in
 chmod +x install-user.sh
 ./install-user.sh
 ```
+
+Then later once the user is created do the following.  LEts say we called the user 'stafi' the command next would contain stafi.
+
+```
+su - stafi
+
+
+
+```
