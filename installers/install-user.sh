@@ -2,7 +2,7 @@
 
 
 #Add user to sudo group
- read -p "What ubuntu user would you like to create for running your node? I suggest stafi:" user
+ read -p "What ubuntu user would you like to create for running your node? I suggest stafi.  It is ok if it already exists:" user
 echo "The user needs to be part of the sudo group.  Adding it now if it hasnt already been added"
 
 
@@ -17,3 +17,11 @@ fi
 
 #sudo usermod -aG sudo $user
 echo "finished installing"
+
+cd /home/$user/
+apt-get -y update
+apt-get -y upgrade
+apt-get -y install git
+
+git clone https://github.com/Geordie-R/stafi-validator-backups.git geordiertools
+find * -type f -iname "*.sh" -exec chmod +x {} \;
