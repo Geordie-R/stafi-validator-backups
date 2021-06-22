@@ -10,7 +10,7 @@ if id "$user" >/dev/null 2>&1; then
         echo "user already exists"
 else
         echo "user does not exist...creating"
-        adduser --gecos "" --disabled-password $user
+        adduser --gecos "" $user
         adduser $user sudo
 
 fi
