@@ -203,8 +203,8 @@ $HOME/geordiertools/stafi-startstop/stop.sh
 sleep 2
 echo "Launching the start command at $HOME/geordiertools/stafi-startstop/start.sh"
 $HOME/geordiertools/stafi-startstop/start.sh
-
-echo "9999999" > $HOME/geordiertools/stafi-restores/sync.log
+defaultblockdiff="9999999"
+echo "$defaultblockdiff" > $HOME/geordiertools/stafi-restores/sync.log
 
 echo "Delegating to restorelogwatcher.sh please wait..."
 sleep 1
@@ -216,16 +216,17 @@ sleep 3
 while [[ "1" == "1" ]]
 do
 val=$(<$HOME/geordiertools/stafi-restores/sync.log)
-echo "restore.sh sync val is $val"
+#echo "restore.sh sync val is $val"
 if [[ $val -le 0 ]]; then
 echo "0 Block Difference Detected"
         break;
+elif [[ "$val" == "$defaultblockdiff" ]];
+then
+echo "Sync is initialising....please wait"
+sleep 20
 fi
         sleep 2
 done
-echo "Complete from restore.sh!"
-
-
 
 cat << "EOF"
 
