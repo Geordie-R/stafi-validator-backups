@@ -7,5 +7,5 @@ I will do a video of this whole process to explain everything better soon but fo
 
 https://geordier.gitbook.io/stafi-validator-backups/
 
-Leave me feedback in stafi discord or on telegram at @GeordieR
+Leave me feedback in stafi discord or on telegram at https://t.me/GeordieR
 
