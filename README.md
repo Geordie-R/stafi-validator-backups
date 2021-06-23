@@ -15,8 +15,5 @@ sudo ./install-user.sh
 Then you will be logged into the new user ready for the next script.
 
 ```
-cd ~
-wget https://raw.githubusercontent.com/Geordie-R/stafi-validator-backups/main/installers/install-geordiertools.sh
-chmod +x install-geordiertools.sh
-sudo ./install-geordiertools.sh
+$HOME/geordiertools/installers/install-geordiertools.sh
 ```
