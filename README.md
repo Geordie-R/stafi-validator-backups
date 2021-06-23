@@ -17,3 +17,14 @@ Then you will be logged into the new user ready for the next script.
 ```
 sudo $HOME/geordiertools/installers/install-geordiertools.sh
 ```
+### Run Restore
+
+```
+sudo $HOME/geordiertools/stafi-restores/restore.sh
+```
+If you have already downloaded a download previously you can do the following instead
+
+```
+sudo $HOME/geordiertools/stafi-restores/restore.sh "nodownload"
+```
+
