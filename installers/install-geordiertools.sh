@@ -29,8 +29,9 @@ chown -R $user: /home/$user/geordiertools/
 find * -type f -iname "*.sh" -exec chmod +x {} \;
 rm README.md
 
-
-
+echo "Switching to $user user, you will be prompted for your password"
+sleep 3
+su - $user
 
 
 #INSTALLER
