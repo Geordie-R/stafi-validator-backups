@@ -5,18 +5,7 @@ This project is the first iteration of a backups and restore solution for stafi,
 
 ```
 cd ~
-wget https://raw.githubusercontent.com/Geordie-R/stafi-validator-backups/main/installers/install-user.sh
-chmod +x install-user.sh
-sudo ./install-user.sh
-```
-
-Then later once the user is created do the following.  LEts say we called the user 'stafi' the command next would contain stafi.
-
-### Switch over to the new user
-```
-su - stafi
-```
-Next install the geordiertools folder
-```
-sudo $HOME/geordiertools/installers/install-geordiertools.sh
+wget https://raw.githubusercontent.com/Geordie-R/stafi-validator-backups/main/installers/install-geordiertools.sh
+chmod +x install-geordiertools.sh
+sudo ./install-geordiertools.sh
 ```
