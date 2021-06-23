@@ -15,5 +15,5 @@ sudo ./install-user.sh
 Then you will be logged into the new user ready for the next script.
 
 ```
-$HOME/geordiertools/installers/install-geordiertools.sh
+sudo $HOME/geordiertools/installers/install-geordiertools.sh
 ```
