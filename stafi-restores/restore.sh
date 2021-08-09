@@ -35,6 +35,10 @@ function getBytesFromFilename(){
   echo $bytesfromfilename
 }
 
+echo "Removing sync.log if it exists"
+rm -f $HOME/geordiertools/stafi-restores/sync.log
+touch $HOME/geordiertools/stafi-restores/sync.log
+
 cat << "MENUEOF"
 
 
@@ -123,13 +127,17 @@ echo "please wait...."
 sleep 10
 #Stop the node
 echo "sleep ended"
+echo "About to launch $HOME/geordiertools/stafi-startstop/stop.sh"
 $HOME/geordiertools/stafi-startstop/stop.sh
 echo "`date` - Removing db files..."
-sudo rm -rf "$HOME/.local/share/stafi/chains/stafi_mainnet/db/*"
+sudo rm -rf "$HOME/.local/share/stafi/chains/stafi_mainnet/db"
 echo "`date` - Starting extraction..."
 
 #sudo mkdir $HOME/.local/share/stafi/chains/stafi_mainnet/db/
 #sudo tar -xvf $downloadsdir/$latest_file --directory $HOME/.local/share/stafi/chains/stafi_mainnet/db
+
+mkdir $HOME/.local/share/stafi/chains/stafi_mainnet/db/
+chmod 775 $HOME/.local/share/stafi/chains/stafi_mainnet/db/
 
 cd $HOME/.local/share/stafi/chains/stafi_mainnet/db/
 
@@ -204,6 +212,7 @@ sleep 2
 echo "Launching the start command at $HOME/geordiertools/stafi-startstop/start.sh"
 $HOME/geordiertools/stafi-startstop/start.sh
 defaultblockdiff="9999999"
+
 echo "$defaultblockdiff" > $HOME/geordiertools/stafi-restores/sync.log
 
 echo "Delegating to restorelogwatcher.sh please wait..."
