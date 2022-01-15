@@ -45,4 +45,6 @@ fi
 
 chown -R $user: $config_file
 
-echo "finished install"
+echo "Finished install of geordiertools...keep reading for next steps!"
+echo "Now you need to build a stafi node if you haven't built one already from https://docs.stafi.io/stafi-chain/network/participants/validator-sv/run-a-node "
+echo "Once you have built a stafi node or if you have previously built one you can then continue to run the next scrit restore.sh as per instructions from https://stafidocs.geordier.co.uk/restores/restore-stafi-node"
