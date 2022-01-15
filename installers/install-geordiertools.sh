@@ -1,8 +1,8 @@
 #!/bin/bash
-. ../useful_functions.sh
+dir_tools="$HOME/geordiertools"
+. $dir_tools/useful_functions.sh
 #INSTALLER
 
-dir_tools="$HOME/geordiertools"
 dir_restore="$dir_tools/stafi-restores"
 dir_backups="$dir_tools/stafi-backups"
 dir_startstop="$dir_tools/stafi-startstop"
