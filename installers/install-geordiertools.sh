@@ -62,6 +62,6 @@ echo "
 ╚═╝╚═╝  ╚═══╝╚══════╝   ╚═╝   ╚═╝  ╚═╝╚══════╝╚══════╝
 "                                                      
 echo " "
-echo "## Next Steps ##
+echo "## Next Steps ##"
 echo "Now you need to build a stafi node if you haven't built one already from https://docs.stafi.io/stafi-chain/network/participants/validator-sv/run-a-node "
 echo "Once you have built a stafi node or if you have previously built one you can then continue to run the next script restore.sh as per instructions from https://stafidocs.geordier.co.uk/restores/restore-stafi-node"
