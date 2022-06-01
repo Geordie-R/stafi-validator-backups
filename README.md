@@ -30,3 +30,9 @@ Then this...
 ```
 sudo /home/stafi/geordiertools/installers/install-geordiertools.sh
 ```
+
+Then the restore.sh is this
+
+```
+/home/stafi/geordiertools/stafi-restores/restore.sh
+```
