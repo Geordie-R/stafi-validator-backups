@@ -5,8 +5,9 @@
 #echo "Run as root or use sudo"
 #fi
 
+home_var= "/home/stafi"
 
-. $HOME/geordiertools/useful_functions.sh
+. $home_var/geordiertools/useful_functions.sh
 
 get_config_value "validator-name"
 validatorname=$(echo $global_value)
@@ -15,14 +16,14 @@ get_config_value "platform-dir"
 platformdir=$(echo $global_value)
 
 
-sshfile="$HOME/.ssh/id_stafi"
+sshfile="$home_var/.ssh/id_stafi"
 sshportno=468
 remote_user="youruser@yourwebspace.co.uk"
 remote_server_folder="/var/www/yourwebspace.co.uk/public_html"
-downloads_folder="$HOME/geordiertools/downloads"
+downloads_folder="$home_var/geordiertools/downloads"
 datename=$(date +%Y-%m-%d_%H-%M)
 filename="$downloads_folder/$datename-db-"
-shcreate="$HOME/geordiertools/send-snapshot.sh"
+shcreate="$home_var/geordiertools/send-snapshot.sh"
 
 #Remove older files just leave last couple
 echo "Removing old backups"
@@ -34,20 +35,20 @@ dqt='"' # Store double quote for easy escaping
 rm -rf $shcreate
 echo "Exporting db directory on $datename..."
 
-sudo $HOME/geordiertools/stafi-startstop/stop.sh
+sudo $home_var/geordiertools/stafi-startstop/stop.sh
 sleep 1
 
-cd "$HOME/$platformdir/"
+cd "$home_var/$platformdir/"
 #./target/release/stafi export-blocks --pruning archive > $filename.json
 
-dir_compress="$HOME/.local/share/stafi/chains/stafi_mainnet/db/"
+dir_compress="$home_var/.local/share/stafi/chains/stafi_mainnet/db/"
 dir_size=$(du -sb $dir_compress | awk '{print $1}')
 filename="$downloads_folder/$datename-db-$dir_size"
 if [[ $1 == "send" ]];
 then
 echo "" >> $shcreate
 echo "Creating compressed archive..."
-echo "cd $HOME/.local/share/stafi/chains/stafi_mainnet/db/" >> $shcreate
+echo "cd $home_var/.local/share/stafi/chains/stafi_mainnet/db/" >> $shcreate
 echo "tar -Scf - * | pv -s $dir_size | pigz -3 -p 4 > $filename.tar.gz" >> $shcreate
 
 #echo "sudo pigz -Scf - $filename.tar.gz | pv -s $dir_size | tar cf -" >> $shcreate
@@ -72,7 +73,7 @@ echo "rsync -rv -e 'ssh -p $sshportno' --progress $filename.tar.gz $remote_user:
 chmod +x $shcreate
 echo "Sending the backup...`date`"
 $shcreate
-cd "$HOME/$platformdir/"
+cd "$home_var/$platformdir/"
 echo "finished sending `date`"
 sleep 1
 
@@ -81,4 +82,4 @@ fi
 echo "Finished take-snapshot.sh at $datename"
 echo "Starting Validator"
 
-$HOME/geordiertools/stafi-startstop/start.sh
+$home_var/geordiertools/stafi-startstop/start.sh
