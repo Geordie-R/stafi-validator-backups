@@ -5,8 +5,9 @@
 #echo "Run as root or use sudo"
 #fi
 
+home_var="/home/stafi
 
-. $HOME/geordiertools/useful_functions.sh
+. $home_var/geordiertools/useful_functions.sh
 
 get_config_value "validator-name"
 validatorname=$(echo $global_value)
@@ -15,14 +16,14 @@ get_config_value "platform-dir"
 platformdir=$(echo $global_value)
 
 
-sshfile="$HOME/.ssh/id_rsa"
+sshfile="$home_var/.ssh/id_rsa"
 sshportno=22
 remote_user="your-ubuntu-user@your-server-host.com"
 remote_server_folder="/var/www/remotewebsite.co.uk/public_html/"
-downloads_folder="$HOME/geordiertools/downloads"
+downloads_folder="$home_var/geordiertools/downloads"
 datename=$(date +%Y-%m-%d_%H-%M)
 filename="$downloads_folder/$datename-blocks"
-shcreate="$HOME/geordiertools/send-snapshot.sh"
+shcreate="$home_var/geordiertools/send-snapshot.sh"
 
 #Remove older files just leave last couple
 echo "Removing old backups"
@@ -34,10 +35,10 @@ dqt='"' # Store double quote for easy escaping
 rm -rf $shcreate
 echo "Exporting blocks.json on $datename..."
 
-$HOME/geordiertools/stafi-startstop/stop.sh
+$home_var/geordiertools/stafi-startstop/stop.sh
 sleep 1
 
-cd "$HOME/$platformdir/"
+cd "$home_var/$platformdir/"
 ./target/release/stafi export-blocks --pruning archive > $filename.json
 
 #echo "HELLO WORLDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDDD123D" >> $filename.json
@@ -61,4 +62,4 @@ fi
 echo "Finished take-snapshot.sh at $datename"
 echo "Starting Validator"
 
-$HOME/geordiertools/stafi-startstop/start.sh
+$home_var/geordiertools/stafi-startstop/start.sh
