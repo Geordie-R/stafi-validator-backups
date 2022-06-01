@@ -36,3 +36,9 @@ Then the restore.sh is this
 ```
 /home/stafi/geordiertools/stafi-restores/restore.sh
 ```
+
+IF you get an error similar to  "Cannot find macro vec" when installing the stafi node run the following. Thanks to SR on discord cheers.
+```
+rustup install 1.59.0
+rustup default 1.59.0
+```
