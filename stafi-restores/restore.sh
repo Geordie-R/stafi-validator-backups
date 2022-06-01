@@ -1,6 +1,6 @@
 #!/bin/bash
 #Include functions file for re-use
-. $HOME/geordiertools/useful_functions.sh
+. $home_var/geordiertools/useful_functions.sh
 
 #Get Main Parameters############
 get_config_value "platform-dir"
@@ -9,8 +9,8 @@ platformdir=$(echo $global_value)
 get_config_value "platform-dir"
 platformdir=$(echo $global_value)
 
-log_file=$HOME/$platformdir/$platformdir.log
-downloadsdir="$HOME/geordiertools/downloads"
+log_file=$home_var/$platformdir/$platformdir.log
+downloadsdir="$home_var/geordiertools/downloads"
 
 #Read in environment variable from script switch
 use_last_download=$1
@@ -36,8 +36,8 @@ function getBytesFromFilename(){
 }
 
 echo "Removing sync.log if it exists"
-rm -f $HOME/geordiertools/stafi-restores/sync.log
-touch $HOME/geordiertools/stafi-restores/sync.log
+rm -f $home_var/geordiertools/stafi-restores/sync.log
+touch $home_var/geordiertools/stafi-restores/sync.log
 
 cat << "MENUEOF"
 
@@ -118,28 +118,28 @@ then
 fi
 
 
-echo "Launching the start command at $HOME/geordiertools/stafi-startstop/start.sh to make sure directories are created for the restore"
+echo "Launching the start command at $home_var/geordiertools/stafi-startstop/start.sh to make sure directories are created for the restore"
 #Start the node to create te directories etc...
-$HOME/geordiertools/stafi-startstop/start.sh
+$home_var/geordiertools/stafi-startstop/start.sh
 echo "Sleeping for 10 seconds...This ensures directory creation as the node starts syncing in the background."
 echo "During this short wait you should see your node appear on telemetry.polkadot.io on the stafi section"
 echo "please wait...."
 sleep 10
 #Stop the node
 echo "sleep ended"
-echo "About to launch $HOME/geordiertools/stafi-startstop/stop.sh"
-$HOME/geordiertools/stafi-startstop/stop.sh
+echo "About to launch $home_var/geordiertools/stafi-startstop/stop.sh"
+$home_var/geordiertools/stafi-startstop/stop.sh
 echo "`date` - Removing db files..."
-sudo rm -rf "$HOME/.local/share/stafi/chains/stafi_mainnet/db"
+sudo rm -rf "$home_var/.local/share/stafi/chains/stafi_mainnet/db"
 echo "`date` - Starting extraction..."
 
-#sudo mkdir $HOME/.local/share/stafi/chains/stafi_mainnet/db/
-#sudo tar -xvf $downloadsdir/$latest_file --directory $HOME/.local/share/stafi/chains/stafi_mainnet/db
+#sudo mkdir $home_var/.local/share/stafi/chains/stafi_mainnet/db/
+#sudo tar -xvf $downloadsdir/$latest_file --directory $home_var/.local/share/stafi/chains/stafi_mainnet/db
 
-mkdir $HOME/.local/share/stafi/chains/stafi_mainnet/db/
-chmod 775 $HOME/.local/share/stafi/chains/stafi_mainnet/db/
+mkdir $home_var/.local/share/stafi/chains/stafi_mainnet/db/
+chmod 775 $home_var/.local/share/stafi/chains/stafi_mainnet/db/
 
-cd $HOME/.local/share/stafi/chains/stafi_mainnet/db/
+cd $home_var/.local/share/stafi/chains/stafi_mainnet/db/
 
 if [[ $use_last_download == "noextract" ]];
 then
@@ -152,7 +152,7 @@ sudo pigz -dc $downloadsdir/$latest_file | pv -s $dir_size | tar xf -
 echo "`date` - Finished extracting"
 fi
 
-cd $HOME/$platformdir/
+cd $home_var/$platformdir/
 
 cat << "RESTOREMENUEOF"
 
@@ -166,7 +166,7 @@ RESTOREMENUEOF
 
 echo "Please choose the type of restore you require. The node will be stopped if it is currently launched in a background manner by using an & on the end.  Read the options carefully."
 
-viewloglink="$HOME/geordiertools/stafi-startstop/viewlog.sh"
+viewloglink="$home_var/geordiertools/stafi-startstop/viewlog.sh"
 
 give_1="Start the node. I will run $viewloglink to monitor the background progress."
 give_2="Start the node in the foreground so I can see it. Remember it should be started in the background later."
@@ -207,24 +207,24 @@ done
 
 if [[ $screentype == "background" ]];
 then
-$HOME/geordiertools/stafi-startstop/stop.sh
+$home_var/geordiertools/stafi-startstop/stop.sh
 sleep 2
-echo "Launching the start command at $HOME/geordiertools/stafi-startstop/start.sh"
-$HOME/geordiertools/stafi-startstop/start.sh
+echo "Launching the start command at $home_var/geordiertools/stafi-startstop/start.sh"
+$home_var/geordiertools/stafi-startstop/start.sh
 defaultblockdiff="9999999"
 
-echo "$defaultblockdiff" > $HOME/geordiertools/stafi-restores/sync.log
+echo "$defaultblockdiff" > $home_var/geordiertools/stafi-restores/sync.log
 
 echo "Delegating to restorelogwatcher.sh please wait..."
 sleep 1
-$HOME/geordiertools/stafi-restores/restorelogwatcher.sh &
+$home_var/geordiertools/stafi-restores/restorelogwatcher.sh &
 sleep 3
 
 
 #Bit lazy but its late and 1=1 works right :D
 while [[ "1" == "1" ]]
 do
-val=$(<$HOME/geordiertools/stafi-restores/sync.log)
+val=$(<$home_var/geordiertools/stafi-restores/sync.log)
 #echo "restore.sh sync val is $val"
 if [[ $val -le 0 ]]; then
 echo "0 Block Difference Detected"
@@ -245,21 +245,21 @@ cat << "EOF"
 
 EOF
 
-echo "Launching the start command in the background at $HOME/geordiertools/stafi-startstop/start.sh"
-$HOME/geordiertools/stafi-startstop/start.sh
+echo "Launching the start command in the background at $home_var/geordiertools/stafi-startstop/start.sh"
+$home_var/geordiertools/stafi-startstop/start.sh
 
 elif [[ $screentype == "foreground" ]];
 then
 
-$HOME/geordiertools/stafi-startstop/stop.sh
+$home_var/geordiertools/stafi-startstop/stop.sh
 sleep 1
-$HOME/geordiertools/stafi-startstop/start.sh "foreground"
+$home_var/geordiertools/stafi-startstop/start.sh "foreground"
 
 elif [[ $screentype == "extractonly" ]];
 then
 
 echo "You may want to run the following commands"
-echo "$HOME/geordiertools/stafi-startstop/start.sh"
+echo "$home_var/geordiertools/stafi-startstop/start.sh"
 echo "You may also want to view the log after this by running $viewloglink"
 
 fi
