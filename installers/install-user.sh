@@ -2,7 +2,7 @@
 . useful_functions.sh
 
 #Add user to sudo group
- read -p "What ubuntu user would you like to create for running your node? I suggest stafi.  It is ok if it already exists:" user
+ read -p "What ubuntu user would you like to create for running your node? YOU MUST write stafi in lowercase just like that. Ive hardcoded it in this branch.  It is ok if it already exists:" user
 echo "The user needs to be part of the sudo group.  Adding it now if it hasnt already been added"
 
 
