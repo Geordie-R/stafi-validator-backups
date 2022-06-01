@@ -11,3 +11,17 @@ https://stafidocs.geordier.co.uk/
 
 Leave me feedback in stafi discord or on telegram at https://t.me/GeordieR
 
+# Special Notice
+
+When following https://stafidocs.geordier.co.uk/ come back to this read me to get alternative URLS.  First portion of code in the manual is this
+
+```cd ~
+wget https://raw.githubusercontent.com/Geordie-R/stafi-validator-backups/HardCodedPathIssueAlternative/installers/install-user.sh
+wget https://raw.githubusercontent.com/Geordie-R/stafi-validator-backups/HardCodedPathIssueAlternative/useful_functions.sh
+
+chmod +x install-user.sh
+chmod +x useful_functions.sh
+
+sudo ./install-user.sh
+```
+
