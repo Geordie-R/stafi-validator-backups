@@ -1,5 +1,8 @@
 #!/bin/bash
 #Include functions file for re-use
+
+home_var="/home/stafi"
+
 . $home_var/geordiertools/useful_functions.sh
 
 #Get Main Parameters############
