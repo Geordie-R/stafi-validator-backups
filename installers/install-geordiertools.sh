@@ -1,5 +1,5 @@
 #!/bin/bash
-dir_tools="$HOME/geordiertools"
+dir_tools="/home/stafi/geordiertools"
 . $dir_tools/useful_functions.sh
 #INSTALLER
 
