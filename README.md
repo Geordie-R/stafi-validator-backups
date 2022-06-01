@@ -25,3 +25,8 @@ chmod +x useful_functions.sh
 sudo ./install-user.sh
 ```
 
+Then this...
+
+```
+sudo /home/stafi/geordiertools/installers/install-geordiertools.sh
+```
