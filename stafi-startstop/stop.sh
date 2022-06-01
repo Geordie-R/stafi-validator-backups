@@ -1,5 +1,6 @@
 #!/bin/bash
-#. $HOME/geordiertools/useful_functions.sh
+home_var="/home/stafi"
+#. $home_var/geordiertools/useful_functions.sh
 #get_config_value "platform-dir"
 #platformdir=$(echo $global_value)
 #echo "$platformdir is the platform dir"
