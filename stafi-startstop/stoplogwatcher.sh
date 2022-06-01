@@ -1,5 +1,5 @@
 #!/bin/bash
-# gracefully stop node
+# gracefully stop node 
 collect_pid=$(pgrep restorelogwatcher)
 if [ ! -z "$collect_pid" ]; then
         kill -SIGINT $collect_pid
