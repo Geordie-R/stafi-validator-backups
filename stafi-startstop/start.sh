@@ -2,7 +2,9 @@
 
 back_or_foreground=$1
 
-. $HOME/geordiertools/useful_functions.sh
+home_var="/home/stafi"
+
+. $home_var/geordiertools/useful_functions.sh
 get_config_value "validator-name"
 validatorname=$(echo $global_value)
 
@@ -15,10 +17,10 @@ then
   read -p "What is your validator name?: " validatorname
 fi
 
-log_file=$HOME/$platformdir/$platformdir.log
+log_file=$home_var/$platformdir/$platformdir.log
 
 echo "Running start.sh for validator '$validatorname'"
-cd "$HOME/$platformdir"
+cd "$home_var/$platformdir"
 #screen -dmS "$platformdir" ./target/release/stafi --validator --name="$validatorname" --execution=NativeElseWasm
 
 if [ -z "$back_or_foreground" ] || [[ $back_or_foreground == "background" ]];
