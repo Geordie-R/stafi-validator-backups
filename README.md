@@ -5,6 +5,8 @@ This project is the first iteration of a node backups and restore solution for s
 
 I have done a video a few months back. See the link below for instructions and video. 
 
+# ONLY use the user stafi when it asks, its been quickly hardcoded in for this specific branch!!
+
 https://stafidocs.geordier.co.uk/
 
 Leave me feedback in stafi discord or on telegram at https://t.me/GeordieR
