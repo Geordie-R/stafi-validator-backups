@@ -1,5 +1,6 @@
 #!/bin/bash
-. $HOME/geordiertools/useful_functions.sh
+home_var="/home/stafi"
+. $home_var/geordiertools/useful_functions.sh
 get_config_value "validator-name"
 validatorname=$(echo $global_value)
 get_config_value "platform-dir"
@@ -9,5 +10,5 @@ then
   read -p "What is your validator name?: " validatorname
 fi
 
-log_file=$HOME/$platformdir/$platformdir.log
+log_file=$home_var/$platformdir/$platformdir.log
 tail -f $log_file
