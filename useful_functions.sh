@@ -1,5 +1,5 @@
-
-config_file="$HOME/geordiertools/config.ini"
+home_var="/home/stafi"
+config_file="$home_var/geordiertools/config.ini"
 
 function set_config_value(){
   #This replaces a key-pair value
